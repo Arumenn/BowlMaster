@@ -6,6 +6,65 @@ public class ActionMaster {
 
     public enum Action { Tidy, Reset, EndTurn, EndGame, Undefined };
 
+    private int[] bowls = new int[21];
+    private int bowl = 1;
+
+    public static Action NextAction(List<int> rolls) {
+        return Action.Tidy;
+    }
+
+    public Action Bowl(int pins) {
+        if (pins < 0 || pins > 10) {
+            throw new UnityException("Invalid number of pins");
+        }
+
+        bowls[bowl - 1] = pins;
+
+        //last frame
+        if (bowl == 21) {
+            return Action.EndGame;
+        }
+
+        //handles last frame special cases
+        if (bowl >= 19 && pins == 10) {
+            bowl++;
+            return Action.Reset;
+        } else if (bowl == 20) {
+            bowl++;
+            if (bowls[19-1] == 10 && bowls[20-1] == 0) {
+                return Action.Tidy;
+            }else if (((bowls[19 - 1] + bowls[20 - 1]) % 10) == 0) {
+                return Action.Reset;
+            } else if (Bowl21Awarded()) {
+                return Action.Tidy;
+            } else {
+                return Action.EndGame;
+            }
+        }
+
+        if (bowl % 2 != 0) { //first bowl of frames 1-9            
+            if (pins == 10) { //strike
+                bowl += 2;
+                return Action.EndTurn;
+            } else {
+                bowl++;
+                return Action.Tidy;
+            }
+        }else if (bowl % 2 == 0) { //second bowl of frames 1-9
+            bowl++;
+            return Action.EndTurn;
+        }
+
+        throw new UnityException("Not sure what action to return");
+    }
+
+    private bool Bowl21Awarded() {
+        return (bowls[19 - 1] + bowls[20 - 1] >= 10);
+    }
+
+    //previous version
+    /*public enum Action { Tidy, Reset, EndTurn, EndGame, Undefined };
+
     public static Action NextAction(List<int> rolls) {
         Action nextAction = Action.Undefined;
 
@@ -38,8 +97,9 @@ public class ActionMaster {
         }
 
         return nextAction;
-    }
+    }*/
 
+    //old version?
     /*private int[] bowls = new int[21];
     private int bowl = 1;
 
@@ -80,7 +140,7 @@ public class ActionMaster {
             }else {
                 return Action.EndGame;
             }
-            
+
         }
 
         if (bowl % 2 != 0) {

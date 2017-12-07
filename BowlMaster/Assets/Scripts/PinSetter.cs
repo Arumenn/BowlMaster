@@ -35,6 +35,7 @@ public class PinSetter : MonoBehaviour {
     }
 
     public void PerformAction(ActionMaster.Action action) {
+        Debug.Log(action);
         switch (action) {
             case ActionMaster.Action.Tidy:
                 animator.SetTrigger("tidyTrigger");

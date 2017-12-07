@@ -9,8 +9,11 @@ public class GameManager : MonoBehaviour {
     private Ball ball;
     private ScoreDisplay scoreDisplay;
 
+    private ActionMaster actionMaster;
+
 	// Use this for initialization
 	void Start () {
+        actionMaster = new ActionMaster();
         pinSetter = GameObject.FindObjectOfType<PinSetter>();
         ball = GameObject.FindObjectOfType<Ball>();
         scoreDisplay = GameObject.FindObjectOfType<ScoreDisplay>();
@@ -20,8 +23,9 @@ public class GameManager : MonoBehaviour {
         try {
             rolls.Add(pinFall);
             ball.Reset();
-            pinSetter.PerformAction(ActionMaster.NextAction(rolls));
-        }catch {
+            //pinSetter.PerformAction(ActionMaster.NextAction(rolls));
+            pinSetter.PerformAction(actionMaster.Bowl(pinFall));
+        } catch {
             Debug.LogWarning("Something went wrong in GameManager.Bowl");
         }
 
